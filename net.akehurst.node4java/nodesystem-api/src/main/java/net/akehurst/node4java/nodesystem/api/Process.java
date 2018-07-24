@@ -14,7 +14,7 @@ public interface Process extends Module {
 
 	String[] argv();
 
-	Stream getStdout();
+	Stream stdout();
 
 	String cwd();
 
