@@ -5,7 +5,7 @@ import javax.tools.FileObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.akehurst.filesystem.api.FileSystem;
+import net.akehurst.filesystem.api.Filesystem;
 import net.akehurst.node4java.nodesystem.api.Buffer;
 import net.akehurst.node4java.nodesystem.api.JavascriptEngine;
 import net.akehurst.node4java.nodesystem.api.Module;
@@ -16,14 +16,14 @@ public class ModuleLoader {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ModuleLoader.class);
 
 	private final JavascriptEngine jse;
-	private final FileSystem fileSystem;
+	private final Filesystem fileSystem;
 	private final ModuleCache cache;
 
 	// -- default modules
 	private final OS os;
 	private final Buffer buffer;
 
-	public ModuleLoader(final JavascriptEngine jse, final FileSystem fileSystem) {
+	public ModuleLoader(final JavascriptEngine jse, final Filesystem fileSystem) {
 		this.jse = jse;
 		this.fileSystem = fileSystem;
 		this.os = new OSDefault(this, jse);

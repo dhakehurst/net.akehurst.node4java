@@ -3,7 +3,7 @@ package net.akehurst.node4java.nodesystem.common;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import net.akehurst.filesystem.api.FileSystem;
+import net.akehurst.filesystem.api.Filesystem;
 import net.akehurst.node4java.nodesystem.api.Globals;
 import net.akehurst.node4java.nodesystem.api.JavascriptEngine;
 import net.akehurst.node4java.nodesystem.api.NodeSystem;
@@ -13,10 +13,10 @@ import net.akehurst.node4java.nodesystem.graal.NodeOnGraalException;
 abstract public class NodeSystemAbstract implements NodeSystem {
 
 	private final JavascriptEngine jse;
-	private final FileSystem fileSystem;
+	private final Filesystem fileSystem;
 	private final Globals globals;
 
-	public NodeSystemAbstract(final JavascriptEngine javascriptSystem, final FileSystem fileSystem) {
+	public NodeSystemAbstract(final JavascriptEngine javascriptSystem, final Filesystem fileSystem) {
 		this.jse = javascriptSystem;
 		this.fileSystem = fileSystem;
 		this.globals = new GlobalsDefault(this.jse, fileSystem);
@@ -28,7 +28,7 @@ abstract public class NodeSystemAbstract implements NodeSystem {
 	}
 
 	@Override
-	public FileSystem getFileSystem() {
+	public Filesystem getFileSystem() {
 		// TODO Auto-generated method stub
 		return this.fileSystem;
 	}

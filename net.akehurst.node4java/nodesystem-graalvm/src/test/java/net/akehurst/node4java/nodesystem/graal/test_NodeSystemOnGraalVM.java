@@ -2,25 +2,22 @@ package net.akehurst.node4java.nodesystem.graal;
 
 import java.io.File;
 
-import org.apache.commons.vfs2.FileObject;
 import org.graalvm.polyglot.Value;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import net.akehurst.filesystem.virtual.FileSystemVirtual;
-import net.akehurst.node4java.nodesystem.api.FileSystem;
+import net.akehurst.filesystem.api.Filesystem;
+import net.akehurst.filesystem.virtual.FilesystemVirtual;
 
 public class test_NodeSystemOnGraalVM {
 
 	private NodeSystemOnGraalVM sut;
-	private FileSystem fs;
+	private Filesystem fs;
 
 	@Before
 	public void setup() {
-		this.fs = FileSystemVirtual.create();
-		final FileObject vfsRoot = this.fsm.createVirtualFileSystem("vfs://");
-		this.vfs = vfsRoot.getFileSystem();
+		this.fs = FilesystemVirtual.create();
 		final JavascriptEngineGraalVM js = new JavascriptEngineGraalVM();
 		this.sut = new NodeSystemOnGraalVM(js, this.fs);
 	}

@@ -1,6 +1,6 @@
 package net.akehurst.node4java.nodesystem.graal;
 
-import net.akehurst.filesystem.api.FileSystem;
+import net.akehurst.filesystem.api.Filesystem;
 import net.akehurst.node4java.nodesystem.api.JavascriptEngine;
 import net.akehurst.node4java.nodesystem.api.NodeSystem;
 import net.akehurst.node4java.nodesystem.common.NodeSystemAbstract;
@@ -12,7 +12,7 @@ public class NodeSystemOnGraalVM extends NodeSystemAbstract {
 		return new NodeSystemOnGraalVM(js);
 	}
 
-	public NodeSystemOnGraalVM(final JavascriptEngine javascriptSystem, final FileSystem fileSystem) {
+	public NodeSystemOnGraalVM(final JavascriptEngine javascriptSystem, final Filesystem fileSystem) {
 		super(javascriptSystem, fileSystem);
 	}
 
