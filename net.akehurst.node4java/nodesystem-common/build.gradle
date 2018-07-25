@@ -2,5 +2,9 @@ dependencies {
 	
 	api project(":nodesystem-api")
 
-	
+	implementation "org.jooq:jool-java-8:+"
+	//would be nice to use nio.2 ... but this seems have more kinds of filesystem
+	implementation "org.apache.commons:commons-vfs2:2.2"
+	implementation "org.apache.commons:commons-compress:1.17"
+	implementation "org.slf4j:slf4j-api:1.7.25"
 }

@@ -3,4 +3,9 @@ dependencies {
 	api project(":nodesystem-api")
 	implementation project(":nodesystem-common")
 	
+	implementation "org.graalvm:graal-sdk:1.0.0-rc4"
+	implementation "org.apache.commons:commons-vfs2:2.2"
+	implementation "org.apache.commons:commons-compress:1.17"
+	
+	testImplementation "junit:junit:+"
 }
