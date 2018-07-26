@@ -1,0 +1,15 @@
+dependencies {
+	
+	api project(":node4java-api")
+
+	implementation "org.jooq:jool-java-8:+"
+
+	implementation "org.slf4j:slf4j-api:1.7.25"
+	
+	
+	api "net.akehurst.filesystem:filesystem-api:1.0.0-SNAPSHOT"
+	implementation "net.akehurst.filesystem:filesystem-vfs-virtual:1.0.0-SNAPSHOT"
+	implementation "net.akehurst.filesystem:filesystem-vfs-jar:1.0.0-SNAPSHOT"
+	implementation "net.akehurst.filesystem:filesystem-vfs-local:1.0.0-SNAPSHOT"
+	
+}

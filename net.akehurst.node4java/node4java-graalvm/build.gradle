@@ -1,0 +1,11 @@
+dependencies {
+	
+	api project(":node4java-api")
+	implementation project(":node4java-common")
+	
+	implementation "org.graalvm:graal-sdk:1.0.0-rc4"
+
+	
+	
+	testImplementation "junit:junit:+"
+}
