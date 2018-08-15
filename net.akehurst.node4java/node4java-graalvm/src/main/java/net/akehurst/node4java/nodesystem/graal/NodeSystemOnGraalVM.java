@@ -1,23 +1,19 @@
 package net.akehurst.node4java.nodesystem.graal;
 
-import net.akehurst.filesystem.api.virtual.FilesystemVirtual;
-import net.akehurst.node4java.api.JavascriptEngine;
+import java.util.Properties;
+
 import net.akehurst.node4java.api.NodeSystem;
 import net.akehurst.node4java.nodesystem.common.NodeSystemAbstract;
 
 public class NodeSystemOnGraalVM extends NodeSystemAbstract {
 
-	public static NodeSystem create(final FilesystemVirtual fileSystem) {
-		final JavascriptEngine js = new JavascriptEngineGraalVM();
-		return new NodeSystemOnGraalVM(js, fileSystem);
-	}
+    public static NodeSystem create(final Properties configuration) {
 
-	protected NodeSystemOnGraalVM(final JavascriptEngine javascriptSystem, final Filesystem fileSystem) {
-		super(javascriptSystem, fileSystem);
-	}
+        return new NodeSystemOnGraalVM(configuration);
+    }
 
-	public Object eval(final String script) {
-		return this.jse.eval(script);
-	}
+    protected NodeSystemOnGraalVM(final Properties configuration) {
+        super(configuration);
+    }
 
 }

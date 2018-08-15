@@ -9,83 +9,91 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
-import java.util.logging.Logger;
 
-import javax.tools.FileObject;
-import javax.xml.transform.Source;
-
-import org.graalvm.polyglot.Value;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.akehurst.filesystem.api.readonly.FileReadOnly;
+import net.akehurst.node4java.api.JSObject;
+import net.akehurst.node4java.api.JavascriptEngine;
 import net.akehurst.node4java.api.Module;
 
 public class ModuleDefault implements Module {
 
-	protected final Logger LOGGER;
+    protected final Logger LOGGER;
 
-	private final ModuleLoader loader;
-	protected final Context graal;
-	protected Map<String, Object> exports;
+    private final ModuleLoader loader;
+    protected final JavascriptEngine jse;
+    protected JSObject exports;
+    private final Set<String> exportedNames;
 
-	public ModuleDefault(final ModuleLoader loader, final Context graal) {
-		this.LOGGER = LoggerFactory.getLogger(this.getClass());
-		this.loader = loader;
-		this.graal = graal;
-		this.exports = new HashMap<String, Object>() {
-			public Object get(final String key) {
-				ModuleDefault.this.LOGGER.warn(String.format("trying to get, %s", key));
-				return super.get(key);
-			}
-		};
-	}
+    public ModuleDefault(final ModuleLoader loader, final JavascriptEngine jse) {
+        this.LOGGER = LoggerFactory.getLogger(this.getClass());
+        this.loader = loader;
+        this.jse = jse;
+        this.exports = jse.newObject();
+        this.exportedNames = new HashSet<>();
+    }
 
-	@Override
-	public Value exports() {
-		final Value v = this.graal.asValue(this.exports);
-		return v;
-	}
+    void export(final String name, final Object value) {
+        this.exports.setMember(name, value);
+        this.exportedNames.add(name);
+    }
 
-	public Object require(final String name) {
-		return this.loader.require(name);
-	}
+    @Override
+    public JSObject exports() {
+        return this.exports;
+    }
 
-	@Override
-	public Value resolve(final String scriptPath) {
-		try {
-			// need to wrap loaded file as follows
-			//(function(exports, require, module, __filename, __dirname) {
-			//	// Module code actually lives in here
-			//});
+    @Override
+    public Set<String> getExportedNames() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-			final ByteArrayInputStream start = new ByteArrayInputStream(
-					"(function(exports, require, module, __filename, __dirname) {".getBytes(StandardCharsets.UTF_8));
+    public Object require(final String name) {
+        return this.loader.require(name);
+    }
 
-			final FileObject fo = this.loader.resolveFile(scriptPath);
-			final InputStream script = fo.getContent().getInputStream();
+    @Override
+    public JSObject resolve(final String scriptPath) {
+        try {
+            // need to wrap loaded file as follows
+            // (function(exports, require, module, __filename, __dirname) {
+            // // Module code actually lives in here
+            // });
 
-			final ByteArrayInputStream end = new ByteArrayInputStream((System.lineSeparator() + "});").getBytes(StandardCharsets.UTF_8));
+            final ByteArrayInputStream start = new ByteArrayInputStream(
+                    "(function(exports, require, module, __filename, __dirname) {".getBytes(StandardCharsets.UTF_8));
 
-			final Enumeration<? extends InputStream> streams = Collections.enumeration(Arrays.asList(start, script, end));
-			final SequenceInputStream completeStream = new SequenceInputStream(streams);
-			final Reader reader = new InputStreamReader(completeStream);
-			final Source src = Source.newBuilder("js", reader, scriptPath).build();
-			final Value funVal = this.graal.eval(src);
+            final FileReadOnly fo = this.loader.resolveFile(scriptPath);
+            final InputStream script = fo.inputStream();
 
-			final Object require = (Function<String, Object>) (n) -> this.require(n);
-			final Object __filename = scriptPath;
-			final Object __dirname = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
-			final Value val = funVal.execute(this.exports, require, this, __filename, __dirname);
-			this.exports = val.getMember("exports").as(Map.class);
-			return this.exports();
-		} catch (final Exception e) {
-			this.LOGGER.error(String.format("in requireScript, %s", e.getMessage() + e.getStackTrace()[0]));
-			this.LOGGER.error(String.format("%s", e.getStackTrace()[0]));
+            final ByteArrayInputStream end = new ByteArrayInputStream((System.lineSeparator() + "});").getBytes(StandardCharsets.UTF_8));
 
-		}
-		return null;
-	}
+            final Enumeration<? extends InputStream> streams = Collections.enumeration(Arrays.asList(start, script, end));
+            final SequenceInputStream completeStream = new SequenceInputStream(streams);
+            final Reader reader = new InputStreamReader(completeStream);
+            // final Source src = Source.newBuilder("js", reader, scriptPath).build();
+            // final Value funVal = this.graal.eval(src);
+
+            final Function<String, Object> require = (Function<String, Object>) (n) -> this.require(n);
+            final String __filename = scriptPath;
+            final String __dirname = scriptPath.substring(0, scriptPath.lastIndexOf('/'));
+
+            final JSObject funVal = this.jse.eval(scriptPath, reader, this.loader.resolveDirectory(__dirname));
+            final JSObject val = funVal.execute(this.exports, require, this, __filename, __dirname);
+            this.exports = val.getMemberAsJs("exports");
+            return this.exports();
+        } catch (final Exception e) {
+            this.LOGGER.error(String.format("in requireScript, %s", e.getMessage() + e.getStackTrace()[0]));
+            this.LOGGER.error(String.format("%s", e.getStackTrace()[0]));
+
+        }
+        return null;
+    }
 
 }

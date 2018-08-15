@@ -1,16 +1,18 @@
 package net.akehurst.node4java.api;
 
-import java.util.Map;
+import java.util.Set;
 
 public interface Module {
 
-	Map<String, Object> exports();
+    Set<String> getExportedNames();
 
-	/**
-	 *
-	 * @param scriptPath
-	 * @return exports of the module
-	 */
-	Map<String, Object> resolve(final String scriptPath);
+    JSObject exports();
+
+    /**
+     *
+     * @param scriptPath
+     * @return exports of the module
+     */
+    JSObject resolve(final String scriptPath);
 
 }

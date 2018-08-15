@@ -1,6 +1,6 @@
 package net.akehurst.node4java.api;
 
-public interface Globals {
+public interface Globals extends Module {
 
 	void clearImmediate(Immediate immediateObject);
 
